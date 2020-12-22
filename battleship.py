@@ -28,12 +28,12 @@ def printBoard(board, numcols):
     :return: None
     """
     # Shows the board, one row at a time, labelled
-    print("  {0}".format(' '.join([chr(65 + i) for i in range(numcols)])))
-    print(" {0}+".format('+-' * numcols))
+    print("   {0}".format(' '.join([chr(65 + i) for i in range(numcols)])))
+    print("  {0}+".format('+-' * numcols))
     rowNumber = 1
     for row in board:
-        print("%d|%s|" % (rowNumber, "|".join(row)))
-        print(" {0}+".format('+-' * numcols))
+        print("%02d|%s|" % (rowNumber, "|".join(row)))
+        print("  {0}+".format('+-' * numcols))
         rowNumber = rowNumber + 1
 
     return None

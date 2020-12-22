@@ -78,7 +78,7 @@ def makeBoard(numcols):
     # computer will generate play board but not reveal
     rows, columns, compChoicePool = generateComputerChoicePool(numcols)
     i = 0
-    while i < numcols:
+    while i < min(5, numcols):
         compChoice = random.choice(compChoicePool)
         rowNumberComp, columnNumberComp = generateShips(compChoice[1], compChoice[0])
         computerBoard[rowNumberComp][columnNumberComp] = 'X'
@@ -88,11 +88,12 @@ def makeBoard(numcols):
     # set up player board and print
     print("Player, set up your ships . . .")
     printBoard(playerBoard, numcols)
-    coordinatesIn = input("Enter {0} board coordinates (comma delimited) to place ships\n".format(str(numcols)) +
-                          "columns available: {0}\n".format(', '.join(["'"+k+"'" for k in columns])) +
-                          "rows available: {0}\n".format(', '.join(str(k) for k in rows)) +
-                          "e.g. {0}\n".format(', '.join([(k.upper() + str(l)) for k in columns for l in rows][:numcols]))
-                          ). \
+    coordinatesIn = \
+        input("Enter {0} board coordinates (comma delimited) to place ships\n".format(str(min(5, numcols))) +
+              "columns available: {0}\n".format(', '.join(["'" + k + "'" for k in columns])) +
+              "rows available: {0}\n".format(', '.join(str(k) for k in rows)) +
+              "e.g. {0}\n".format(', '.join([(k.upper() + str(l)) for k in columns for l in rows][:min(5, numcols)]))
+              ). \
         upper(). \
         replace(', ', ',')
 
@@ -100,7 +101,7 @@ def makeBoard(numcols):
 
     coordinates = coordinatesIn.split(sep=',')
 
-    assert len(coordinates) == numcols, "{0} coordinates required".format(str(numcols))
+    assert len(coordinates) == min(5, numcols), "{0} coordinates required".format(str(min(5, numcols)))
 
     for k in coordinates:
         rowNumber, columnNumber = generateShips(k[1], k[0])
@@ -134,8 +135,8 @@ def runGame(numcols, computerBoard, playerBoard, guessesBoard):
         # player plays
         print("Player, guess a battleship location")
         print("Enter the opponent's board coordinate to launch missile\n" +
-              "columns available: 'A', 'B', 'C', 'D', 'E'\n" +
-              "rows available: 1, 2, 3, 4, 5\n" +
+              "columns available: {0}\n".format(', '.join(["'"+k+"'" for k in columnls])) +
+              "rows available: {0}\n".format(', '.join(str(k) for k in rowls)) +
               "e.g. A1 or B4\n"
               )
         printBoard(guessesBoard, numcols)
@@ -156,7 +157,7 @@ def runGame(numcols, computerBoard, playerBoard, guessesBoard):
         elif computerBoard[rowNumber][columnNumber] in ('.', 'O'):
             print("\nPlayer played: You have already launched a missile here.\n")
 
-        if playerGuess == numcols:
+        if playerGuess == min(5, numcols):
             print("You Win!")
             break
 
@@ -179,7 +180,7 @@ def runGame(numcols, computerBoard, playerBoard, guessesBoard):
         printBoard(playerBoard, numcols)
         print("\n")
 
-        if computerGuess == numcols:
+        if computerGuess == min(5, numcols):
             print("You Lose!")
             break
 
@@ -189,7 +190,7 @@ def runGame(numcols, computerBoard, playerBoard, guessesBoard):
 if __name__ == '__main__':
     # ask for board dimension
     numcols = int(input('Enter the number of columns for the square board (at least 5 recommended): '))
-    print("The game will be played with {0} ships.".format(numcols))
+    print("The game will be played with {0} ships.".format(min(5, numcols)))
 
     # Initialize boards
     computerBoard, playerBoard, guessesBoard = makeBoard(numcols=numcols)

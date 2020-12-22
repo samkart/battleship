@@ -153,7 +153,7 @@ def runGame(numcols, computerBoard, playerBoard, guessesBoard):
             guessesBoard[rowNumber][columnNumber] = 'O'
             computerBoard[rowNumber][columnNumber] = 'O'
             playerGuess = playerGuess + 1
-            print("\nPlayer played: That's a HIT! Computer has {0} battleships left.\n".format(numcols - playerGuess))
+            print("\nPlayer played: That's a HIT! Computer has {0} battleships left.\n".format(min(5, numcols) - playerGuess))
         elif computerBoard[rowNumber][columnNumber] in ('.', 'O'):
             print("\nPlayer played: You have already launched a missile here.\n")
 
@@ -174,7 +174,7 @@ def runGame(numcols, computerBoard, playerBoard, guessesBoard):
         elif playerBoard[rowNumberComp][columnNumberComp] == 'X':
             playerBoard[rowNumberComp][columnNumberComp] = 'O'
             computerGuess = computerGuess + 1
-            print("Computer played: You LOST a battleship! {0} left.".format(numcols - computerGuess))
+            print("Computer played: You LOST a battleship! {0} left.".format(min(5, numcols) - computerGuess))
 
         print("\nplayer board")
         printBoard(playerBoard, numcols)

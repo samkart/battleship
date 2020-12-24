@@ -7,6 +7,8 @@ __AUTHOR__ = "Shubhradeep Majumdar"
 
 import random
 
+max_ship_count = 6
+
 
 # Function to ask the user for their board position
 def generateShips(row, column):
@@ -70,6 +72,8 @@ def makeBoard(numcols):
     :return:
     """
 
+    applicableShips = min(max_ship_count, numcols)
+
     computerBoard, playerBoard, guessesBoard = \
         [[' ' for i in range(numcols)] for j in range(numcols)],\
         [[' ' for i in range(numcols)] for j in range(numcols)],\
@@ -78,9 +82,10 @@ def makeBoard(numcols):
     # computer will generate play board but not reveal
     rows, columns, compChoicePool = generateComputerChoicePool(numcols)
     i = 0
-    while i < min(5, numcols):
+    while i < applicableShips:
         compChoice = random.choice(compChoicePool)
-        rowNumberComp, columnNumberComp = generateShips(compChoice[1], compChoice[0])
+        rowNumberComp, columnNumberComp = \
+            generateShips(''.join([k for k in list(compChoice) if k != compChoice[0]]), compChoice[0])
         computerBoard[rowNumberComp][columnNumberComp] = 'X'
         compChoicePool = computerChoicesAvailable(compChoicePool, compChoice)
         i = i + 1
@@ -89,10 +94,10 @@ def makeBoard(numcols):
     print("Player, set up your ships . . .")
     printBoard(playerBoard, numcols)
     coordinatesIn = \
-        input("Enter {0} board coordinates (comma delimited) to place ships\n".format(str(min(5, numcols))) +
+        input("Enter {0} board coordinates (comma delimited) to place ships\n".format(str(applicableShips)) +
               "columns available: {0}\n".format(', '.join(["'" + k + "'" for k in columns])) +
               "rows available: {0}\n".format(', '.join(str(k) for k in rows)) +
-              "e.g. {0}\n".format(', '.join([(k.upper() + str(l)) for k in columns for l in rows][:min(5, numcols)]))
+              "e.g. {0}\n".format(', '.join([(k.upper() + str(l)) for k in columns for l in rows][:applicableShips]))
               ). \
         upper(). \
         replace(', ', ',')
@@ -101,10 +106,11 @@ def makeBoard(numcols):
 
     coordinates = coordinatesIn.split(sep=',')
 
-    assert len(coordinates) == min(5, numcols), "{0} coordinates required".format(str(min(5, numcols)))
+    assert len(coordinates) == applicableShips, "{0} coordinates required".format(str(applicableShips))
 
     for k in coordinates:
-        rowNumber, columnNumber = generateShips(k[1], k[0])
+        rowNumber, columnNumber = \
+            generateShips(''.join([l for l in list(k) if l != k[0]]), k[0])
         playerBoard[rowNumber][columnNumber] = 'X'
 
     print('Player board below')
@@ -124,10 +130,12 @@ def runGame(numcols, computerBoard, playerBoard, guessesBoard):
     :return:
     """
 
+    applicableShips = min(max_ship_count, numcols)
+
     # initialize computer decisions
     rowls, columnls, compChoicePool = generateComputerChoicePool(numcols)
 
-    # Initialize guess counts
+    # initialize guess counts
     computerGuess, playerGuess = 0, 0
 
     # run game
@@ -141,7 +149,7 @@ def runGame(numcols, computerBoard, playerBoard, guessesBoard):
               )
         printBoard(guessesBoard, numcols)
         inputCoordinate = input().upper().replace(' ', '')
-        rowIn = int(inputCoordinate[1])
+        rowIn = int(''.join([k for k in list(inputCoordinate) if k != inputCoordinate[0]]))
         columnIn = inputCoordinate[0]
         rowNumber, columnNumber = generateShips(rowIn, columnIn)
 
@@ -153,17 +161,20 @@ def runGame(numcols, computerBoard, playerBoard, guessesBoard):
             guessesBoard[rowNumber][columnNumber] = 'O'
             computerBoard[rowNumber][columnNumber] = 'O'
             playerGuess = playerGuess + 1
-            print("\nPlayer played: That's a HIT! Computer has {0} battleships left.\n".format(min(5, numcols) - playerGuess))
+            print("\nPlayer played: That's a HIT! Computer has {0} battleships left.\n".
+                  format(applicableShips - playerGuess)
+                  )
         elif computerBoard[rowNumber][columnNumber] in ('.', 'O'):
             print("\nPlayer played: You have already launched a missile here.\n")
 
-        if playerGuess == min(5, numcols):
+        if playerGuess == applicableShips:
             print("You Win!")
             break
 
-        # Computer Plays
+        # computer plays
         compChoice = random.choice(compChoicePool)
-        rowNumberComp, columnNumberComp = generateShips(compChoice[1], compChoice[0])
+        rowNumberComp, columnNumberComp = \
+            generateShips(''.join([k for k in list(compChoice) if k != compChoice[0]]), compChoice[0])
 
         # reset its choice pool
         compChoicePool = computerChoicesAvailable(compChoicePool, compChoice)
@@ -174,13 +185,13 @@ def runGame(numcols, computerBoard, playerBoard, guessesBoard):
         elif playerBoard[rowNumberComp][columnNumberComp] == 'X':
             playerBoard[rowNumberComp][columnNumberComp] = 'O'
             computerGuess = computerGuess + 1
-            print("Computer played: You LOST a battleship! {0} left.".format(min(5, numcols) - computerGuess))
+            print("Computer played: You LOST a battleship! {0} left.".format(applicableShips - computerGuess))
 
         print("\nplayer board")
         printBoard(playerBoard, numcols)
         print("\n")
 
-        if computerGuess == min(5, numcols):
+        if computerGuess == applicableShips:
             print("You Lose!")
             break
 
@@ -190,7 +201,7 @@ def runGame(numcols, computerBoard, playerBoard, guessesBoard):
 if __name__ == '__main__':
     # ask for board dimension
     numcols = int(input('Enter the number of columns for the square board (at least 5 recommended): '))
-    print("The game will be played with {0} ships.".format(min(5, numcols)))
+    print("The game will be played with {0} ships.".format(min(max_ship_count, numcols)))
 
     # Initialize boards
     computerBoard, playerBoard, guessesBoard = makeBoard(numcols=numcols)
@@ -208,4 +219,3 @@ if __name__ == '__main__':
     print("\ncomputer board")
     printBoard(computerBoard, numcols)
     print("\n")
-
